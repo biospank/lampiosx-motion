@@ -3,20 +3,19 @@ lampiosx-motion
 
 ### requirement
 
-- macruby 0.10
-- hotcocoa 0.6.3
+- rubymotion
 
 clone the repository
 
-    git clone http://github.com/biospank/lampiosx.git
+    git clone http://github.com/biospank/lampiosx-motion.git
 
 to test launch 
 
-    macrake run 
+    rake run 
 
 to bundle launch 
 
-    macrake clean 
-    macrake deploy 
+    rake clean 
+    rake deploy 
     
 use DMG Canvas to package a dmg file
