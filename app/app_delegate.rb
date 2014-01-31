@@ -42,7 +42,7 @@ class AppDelegate
         :ringing => false, 
         :capture  => /sta chiamando|is calling/
       }, 
-      {:name => "JavaApplicationStub", 
+      {:name => "ooVoo-Mac", 
         :ringing => false, 
         :capture => /ooVoo video call|chiamata Video ooVoo|Videochiamata ooVoo/
       }
@@ -54,11 +54,11 @@ class AppDelegate
     # nome applicazione case insensitive
     @system_events = SBApplication.applicationWithBundleIdentifier("com.apple.systemevents")
     
-    # NSTimer.scheduledTimerWithTimeInterval 3.0,
-    #              target: self,
-    #            selector: 'on_tick:',
-    #            userInfo: nil,
-    #             repeats: true
+    NSTimer.scheduledTimerWithTimeInterval 3.0,
+                 target: self,
+               selector: 'on_tick:',
+               userInfo: nil,
+                repeats: true
 
     @running = false
 
@@ -304,11 +304,11 @@ Lamp is up to date.
   
   def on_tick(timer)
     unless @running
-      Thread.new do
+      # Thread.new do
         @running = true
         check_processes()
         @running = false
-      end
+      # end
     end
   end
 
@@ -327,7 +327,6 @@ and trigger the script again to proceed.
       ua = system_preference.panes.find { |p| p.name =~ @ua}
       system_preference.setCurrentPane(ua) if ua
       alert :message => msg
-#      alert :message => msg, :icon => image(:file => "#{lib_path}/../resources/lamp.png")
       return false
     end
 
