@@ -43,13 +43,13 @@ class AppDelegate
         :capture  => /sta chiamando|is calling/
       }, 
       {:name => "ooVoo-Mac", 
-        :ringing => false, 
-        :capture => /ooVoo video call|chiamata Video ooVoo|Videochiamata ooVoo/
+        :ringing => false,
+        :capture => lambda {|prc| prc.windows.first.buttons.any? {|w| w.title =~ /Answer|Risposta|Réponse|Antwort/}}
       }
     ]
 
     #@ua = /Universal|Universale|Bedienungs|universel/
-    @ua = /Security|Sicurezza|Sicherheit|sécurité/
+    @ua = /Security|Sicurezza|Sicherheit|Sécurité/
     
     # nome applicazione case insensitive
     @system_events = SBApplication.applicationWithBundleIdentifier("com.apple.systemevents")
@@ -296,7 +296,11 @@ Lamp is up to date.
 
   def ringing?(current_prc, capture)
     if capture
-      current_prc.windows.any? {|w| w.name =~ capture}
+      if capture.is_a? Regexp
+        current_prc.windows.any? {|w| w.name =~ capture}
+      else
+        capture.call(current_prc)
+      end
     else
       current_prc.windows.any? {|w| w.name.nil?}
     end
@@ -315,7 +319,7 @@ Lamp is up to date.
   def assistive_device_enabled?
     msg =<<-eomsg
 Your system is not properly configured to run this app.
-Please select the 'Enable access for assistive devices" checkbox
+Please enable accessibility checkbox for Lamp
 and trigger the script again to proceed.
     eomsg
     
