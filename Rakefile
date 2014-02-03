@@ -15,6 +15,7 @@ end
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'Lamp'
+  app.icon = 'lamp.icns'
   app.identifier = 'lampwireless.it'
   app.version = '3.0 mavericks'
   app.info_plist['LSUIElement'] = true
