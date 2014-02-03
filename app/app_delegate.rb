@@ -255,7 +255,7 @@ Lamp is up to date.
       # puts "Querying http server..."
       BW::HTTP.get("http://#{pi_ip}:4567/lamp/osx/version") do |version_response|
         #p response.body.to_str
-        version = 31 #version_response.body.to_str
+        version = version_response.body.to_str
 
         if version.to_i > CURRENT_VERSION
           download_msg!("www.lampwireless.it")
