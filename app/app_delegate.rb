@@ -28,7 +28,7 @@ class AppDelegate
       },
       {:name => "Skype", 
         :ringing => false, 
-        :capture  => /Incoming call|Chiamata in arrivo|Appel entrant|Llamada entrante|Eingehender Anruf/
+        :capture  => /Incoming|Chiamata|Appel|Llamada|Eingehender/
       }, 
       {:name => "firefox", 
         :ringing => false, 
@@ -223,7 +223,7 @@ Lamp is up to date.
 
       # puts "Querying http server..."
       BW::HTTP.get("http://#{pi_ip}:4567/lamp/osx") do |response|
-        #p response.body.to_str
+        p response.body.to_str
       end
 
       return true
