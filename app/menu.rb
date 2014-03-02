@@ -15,6 +15,9 @@ module Menu
     @status_menu.addItem NSMenuItem.separatorItem
     @status_menu.addItem createMenuItem("Test", 'on_test')
     @status_menu.addItem createMenuItem("Reset", 'on_reset')
+#    @autostart = createMenuItem("Autostart", 'on_autostart')
+#    @autostart.setState(true)
+#    @status_menu.addItem @autostart
     @status_menu.addItem createMenuItem("Check for updates", 'on_check')
     @status_menu.addItem NSMenuItem.separatorItem
     @status_menu.addItem createMenuItem("Quit", 'terminate:')
