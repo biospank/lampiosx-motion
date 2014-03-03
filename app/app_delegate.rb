@@ -93,29 +93,41 @@ class AppDelegate
       runLoop.run
     end
 
-    @running = false
-
-    # run loop waiting for events every 3 seconds
-    Thread.new do
-      loop do
-        sleep 3
-        begin
-          unless @running
-            @running = true
-            check_processes()
-            @running = false
-          end      
-        rescue Exception => ex
-          @running = false
-          #puts ex.message
-        end
-      end
-    end
-      
+#    # run loop waiting for events every 3 seconds
+#    Thread.new do
+#      loop do
+#        sleep 3
+#        begin
+#          unless @running
+#            puts "running..."
+#            @running = true
+#            check_processes()
+#            @running = false
+#          else
+#            puts "not running..."
+#          end      
+#        rescue Exception => ex
+#          @running = false
+#          puts ex.message
+#        end
+#      end
+#    end
+#      
     Thread.new do
       locate_udp_server!
     end
+      
+    self.performSelectorInBackground('listen!', withObject: nil)
 
+  end
+    
+  def listen!
+    # run loop waiting for events every 3 seconds
+    loop do
+      sleep 3
+      #puts "running..."
+      check_processes()
+    end
   end
 
   def locate_udp_server!
@@ -223,6 +235,7 @@ Lamp is up to date.
 #  end
 
   def switch_lamp!()
+    #puts "switch_lamp!!"
     thread = NSThread.alloc.initWithTarget @switch_action, selector:"call", object:nil
     thread.start
   end
@@ -276,7 +289,9 @@ Lamp is up to date.
     @prcs.each do |prc|
       if active_prc = @system_events.processes.find { |p| p.name == prc[:name]}
         if ringing?(active_prc, prc[:capture])
+          #puts "ringing!!"
           unless prc[:ringing]
+            #puts "prc ringing false"
             prc[:ringing] = true 
             switch_lamp! 
           end
