@@ -48,7 +48,13 @@ class AppDelegate
       }, 
       {:name => "ooVoo-Mac", 
         :ringing => false,
-        :capture => lambda {|prc| (prc.windows.first ? (prc.windows.first.buttons.any? {|w| w.title =~ /Answer|Risposta|Réponse|Antwort/}) : false)}
+        :capture => lambda {|prc| 
+          if prc.windows.empty? 
+            false 
+          else 
+            prc.windows.first.buttons.map(&:title).any? {|title| title =~ /Answer|Risposta|Réponse|Antwort/}
+          end
+        }
       }
     ]
 
@@ -64,9 +70,10 @@ class AppDelegate
   end
 
   def check_processes
+    prcs_names = @system_events.processes.map(&:name)
     @prcs.each do |prc|
-      if(active_prc = (@system_events.processes.find { |p| p.name == prc[:name]}))
-        if ringing?(active_prc, prc[:capture])
+      if(prc_name = (prcs_names.find { |name| name == prc[:name]}))
+        if ringing?(prc_name, prc[:capture])
           #puts "ringing!!"
           unless prc[:ringing]
             #puts "prc ringing false"
@@ -80,15 +87,17 @@ class AppDelegate
     end
   end
 
-  def ringing?(current_prc, capture)
-    if capture
-      if capture.is_a? Regexp
-        current_prc.windows.any? {|w| w.name =~ capture}
+  def ringing?(prc_name, capture)
+    if current_prc = @system_events.processes.find { |p| p.name == prc_name}
+      if capture
+        if capture.is_a? Regexp
+          current_prc.windows.map(&:name).any? {|name| name =~ capture}
+        else
+          capture.call(current_prc)
+        end
       else
-        capture.call(current_prc)
+        current_prc.windows.map(&:name).any? {|name| name.nil?}
       end
-    else
-      current_prc.windows.any? {|w| w.name.nil?}
     end
   end
   
@@ -276,7 +285,7 @@ and trigger the script again to proceed.
     security_pane_regexp = /Security|Sicurezza|Sicherheit|Sécurité/
   
     init_bridge()
-
+  
     if @system_events.UIElementsEnabled
       return true
     else
