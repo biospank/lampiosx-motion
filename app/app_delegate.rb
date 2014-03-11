@@ -16,9 +16,6 @@ class AppDelegate
     
     qlisten.async do
       locate_udp_server!
-    end
-      
-    qlisten.async do
       listen!
     end
   end
@@ -65,29 +62,29 @@ class AppDelegate
       }
     ]
 
-    init_bridge()
+    #init_bridge()
     init_switch()
     
     # run loop waiting for events every 3 seconds
     loop do
       sleep 3
-      puts "running..."
+      #puts "running..."
       check_processes()
     end
   end
 
   def check_processes
-    prcs_names = @system_events.processes.compact.map(&:name)
+    system_events = SBApplication.applicationWithBundleIdentifier("com.apple.systemevents")
+    prcs_names = system_events.processes.compact.map(&:name)
     
+    #puts "prcs_names: #{prcs_names}"
     @prcs.each do |prc|
-      #puts "prcs_names: #{prcs_names}"
       if(prc_name = (prcs_names.find { |name| name == prc[:name]}))
         if ringing?(prc_name, prc[:capture])
-          puts "ringing!!"
-          #puts "prc ringing: #{prc[:ringing]}"
+          #puts "ringing!!"
+#          puts "prc ringing: #{prc[:ringing]}"
           unless prc[:ringing]
-            #puts "prc ringing false"
-            prc[:ringing] = true
+            prc[:ringing] = true 
             switch_lamp!
           end
         else
@@ -98,7 +95,8 @@ class AppDelegate
   end
 
   def ringing?(prc_name, capture)
-    if current_prc = @system_events.processes.compact.find { |p| p.name == prc_name}
+    system_events = SBApplication.applicationWithBundleIdentifier("com.apple.systemevents")
+    if current_prc = system_events.processes.compact.find { |p| p.name == prc_name}
       #puts "prc name: #{current_prc.name}"
       wins = current_prc.windows
       if wins.nil? || wins.empty?
@@ -111,19 +109,19 @@ class AppDelegate
             wins.map(&:name).any? {|name| name =~ capture}
           else
             #puts "oovoo windows present!"
-            capture.call(wins.first)
-#            if win = wins.first
-#              btns = win.buttons
-#              if btns.nil? || btns.empty?
-#                #puts "buttons empty!"
-#                false
-#              else
-#                #puts "buttons present!"
-#                btns.map(&:title).any? {|title| title =~ /Answer|Risposta|Réponse|Antwort/}
-#              end
-#            else
-#              false
-#            end
+            #capture.call(wins.first)
+            if win = wins.first
+              btns = win.buttons
+              if btns.nil? || btns.empty?
+                #puts "buttons empty!"
+                false
+              else
+                #puts "buttons present!"
+                btns.map(&:title).any? {|title| title =~ /Answer|Risposta|Réponse|Antwort/}
+              end
+            else
+              false
+            end
           end
         else
           #puts "camfrog windows present!"
@@ -318,9 +316,9 @@ and trigger the script again to proceed.
     
     security_pane_regexp = /Security|Sicurezza|Sicherheit|Sécurité/
   
-    init_bridge()
+    system_events = SBApplication.applicationWithBundleIdentifier("com.apple.systemevents")
   
-    if @system_events.UIElementsEnabled
+    if system_events.UIElementsEnabled
       return true
     else
       system_preference = SBApplication.applicationWithBundleIdentifier("com.apple.systempreferences")
